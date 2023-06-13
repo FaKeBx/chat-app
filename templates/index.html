@@ -34,7 +34,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     window.onload = function () {
-      const socket = io();
+      const socket = io('http://127.0.0.1:5000');
 
       function addToChat(msg) {
         const span = document.createElement("span");
