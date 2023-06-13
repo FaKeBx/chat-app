@@ -21,4 +21,4 @@ def message_handler(msg):
     send(messages)
 
 if __name__ == "__main__":
-    io.run(app)
+    io.run(app, allow_unsafe_werkzeug=True)
