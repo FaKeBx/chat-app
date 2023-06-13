@@ -33,10 +33,8 @@
     integrity="sha512-jMNwWSmjje4fjYut9MBGKXw5FZA6D67NHAuC9szpjbbjg51KefquNfvn4DalCbGfkcv/jHsHnPo1o47+8u4biA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-
-
     window.onload = function () {
-      const socket = io('http://10.10.108.224:5000');
+      const socket = io();
 
       function addToChat(msg) {
         const span = document.createElement("span");
@@ -60,7 +58,6 @@
       socket.on('getMessage', (msg) => {
         addToChat(msg)
       })
-
 
       socket.on('message', (msgs) => {
         for (msg of msgs) {
