@@ -1,73 +1,34 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="UTF-8">
-  <style>
-    .chat {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat span {
-      margin-bottom: 10px;
-    }
-
-    form {
-      margin-top: 10px;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="chat"></div>
-  <div>
-    <form>
-      <input type="text" placeholder="insira seu nome">
-      <input type="text" placeholder="insira sua mensagem">
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.2/socket.io.js"
-    integrity="sha512-jMNwWSmjje4fjYut9MBGKXw5FZA6D67NHAuC9szpjbbjg51KefquNfvn4DalCbGfkcv/jHsHnPo1o47+8u4biA=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script>
-    window.onload = function () {
-      const socket = io();
-
-      function addToChat(msg) {
-        const span = document.createElement("span");
-        const chat = document.querySelector(".chat");
-        span.innerHTML = `<strong>${msg.name}:</strong> ${msg.message}`;
-        chat.append(span);
-      }
-
-      socket.on('connect', () => {
-        socket.send('Usuário conectado ao socket!')
-      });
-
-      document.querySelector("form").addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        socket.emit('sendMessage', { name: event.target[0].value, message: event.target[1].value })
-        event.target[0].value = "";
-        event.target[1].value = "";
-      })
-
-      socket.on('getMessage', (msg) => {
-        addToChat(msg)
-      })
-
-      socket.on('message', (msgs) => {
-        for (msg of msgs) {
-          addToChat(msg)
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script>
+        const socket = io('http://localhost:5000');
+        const name = prompt('Qual seu nome?');
+        function sendMessage() {
+            if (document.getElementById('message').value)
+            {
+                const mensagem = name + ': ' + document.getElementById('message').value;
+                const p = document.createElement('p');
+                p.innerHTML = mensagem;
+                document.getElementById('messages').appendChild(p);
+                socket.emit('message', mensagem);
+                document.getElementById('message').value = '';
+                
+            }
         }
-      })
-
-    }
-
-  </script>
+        socket.on('broadcast', function (message) {
+            const p = document.createElement('p');
+            p.innerHTML = message;
+            document.getElementById('messages').appendChild(p);
+        });
+    </script>
+</head>
+<body>
+    <h1>Chat Multi Usuário</h1>
+    <div id="messages"></div>
+    <input type="text" id="message" />
+    <button onclick="sendMessage()">Enviar</button>   
 </body>
-
 </html>
