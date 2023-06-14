@@ -1,23 +1,85 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #messages {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos Responsivos */
+
+        @media (max-width: 768px) {
+            input[type="text"], button {
+                width: 100%;
+            }
+        }
+    </style>
     <script>
-        const socket = io('https://chat-app-host.onrender.com', { transports: ['websocket'] });
-        const name = prompt('Qual seu nome?');
+        const socket = io('https://chat-multi-users.onrender.com/', { transports: ['websocket'] });
+        let name = '';
+
+        function login() {
+            name = document.getElementById('name').value;
+            document.getElementById('nameForm').style.display = 'none';
+            document.getElementById('chatForm').style.display = 'block';
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const time = hours + ':' + minutes;
+            return time;
+        }
+
         function sendMessage() {
-            if (document.getElementById('message').value)
-            {
-                const mensagem = name + ': ' + document.getElementById('message').value;
+            if (document.getElementById('message').value) {
+                const time = getCurrentTime();
+                const mensagem = name + ' (' + time + '): ' + document.getElementById('message').value;
                 const p = document.createElement('p');
                 p.innerHTML = mensagem;
                 document.getElementById('messages').appendChild(p);
                 socket.emit('message', mensagem);
                 document.getElementById('message').value = '';
-                
             }
         }
+
         socket.on('broadcast', function (message) {
             const p = document.createElement('p');
             p.innerHTML = message;
@@ -27,8 +89,15 @@
 </head>
 <body>
     <h1>Chat Multi Usuário</h1>
-    <div id="messages"></div>
-    <input type="text" id="message" />
-    <button onclick="sendMessage()">Enviar</button>   
+    <div id="nameForm">
+        <label for="name">Digite seu nome:</label>
+        <input type="text" id="name" />
+        <button onclick="login()">Entrar</button>
+    </div>
+    <div id="chatForm" style="display: none;">
+        <div id="messages"></div>
+        <input type="text" id="message" placeholder="Digite sua mensagem..." />
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
 </body>
 </html>
