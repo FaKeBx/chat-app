@@ -1,24 +1,39 @@
-from flask.app import Flask
-from flask.templating import render_template
-from flask_socketio import SocketIO, emit, send
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
+from threading import Thread
 
 app = Flask(__name__)
-io = SocketIO(app)
+socketio = SocketIO(app)
 
-messages = []
+users = {}
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+def handle_connect(sid):
+    users[sid] = Thread(target=user_thread, args=(sid,))
+    users[sid].start()
 
-@io.on('sendMessage')
-def send_message_handler(msg):
-    messages.append(msg)
-    emit('getMessage', msg, broadcast=True)
+def user_thread(sid):
+    while True:
+        message = socketio.wait(sid)
+        if message is None:
+            break
+        else:
+            emit('broadcast', message, broadcast=True, include_self=False)
 
-@io.on('message')
-def message_handler(msg):
-    send(messages)
+@app.route('/')
+def index():
+    return render_template('client.html')
 
-if __name__ == "__main__":
-    io.run(app)
+@socketio.on('connect')
+def handle_connect():
+    emit('connected', {'data': 'Connected'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    emit('disconnected', {'data': 'Disconnected'})
+
+@socketio.on('message')
+def handle_message(message):
+    emit('broadcast', message, broadcast=True, include_self=False)
+
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000)
