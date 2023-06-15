@@ -1,51 +1,94 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'M PLUS Rounded 1c', Arial, sans-serif;
+            background-color: #111;
             padding: 20px;
         }
 
         h1 {
             text-align: center;
             margin-bottom: 20px;
+            color: #84f;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+        }
+
+        label {
+            justify-self: center;
+            color: #84f;
+            font-size: 1.2rem;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
         }
 
         #messages {
-            background-color: #fff;
-            border: 1px solid #ccc;
+            width: 80vw;
+            background-color: #333;
+            color: #fff;
+            border-radius: 8px;
             padding: 10px;
-            max-height: 400px;
-            overflow-y: scroll;
             margin-bottom: 20px;
         }
 
-        input[type="text"] {
-            width: 80%;
+        #nameForm {
+            display: grid;
+            justify-items: center;
+            gap: 1rem;
+        }
+
+        #chatForm {
+            justify-items: center;
+            gap: 1rem;
+        }
+
+        #name {
+            width: 300px;
             padding: 10px;
             font-size: 16px;
         }
 
+        input[type="text"] {
+            width: 80vw;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: none;
+        }
+
         button {
+            display: block;
+            justify-self: center;
+            border-radius: 4px;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #4CAF50;
+            background-color: #84f;
             color: #fff;
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #84c;
         }
 
         /* Estilos Responsivos */
 
         @media (max-width: 768px) {
-            input[type="text"], button {
+
+            input[type="text"],
+            button {
                 width: 100%;
             }
         }
@@ -57,7 +100,7 @@
         function login() {
             name = document.getElementById('name').value;
             document.getElementById('nameForm').style.display = 'none';
-            document.getElementById('chatForm').style.display = 'block';
+            document.getElementById('chatForm').style.display = 'grid';
         }
 
         function getCurrentTime() {
@@ -85,10 +128,17 @@
             p.innerHTML = message;
             document.getElementById('messages').appendChild(p);
         });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.keyCode !== 13) return;
+            login()
+            sendMessage()
+        })
     </script>
 </head>
+
 <body>
-    <h1>Chat Multi Usuário</h1>
+    <h1>MuuS Chat</h1>
     <div id="nameForm">
         <label for="name">Digite seu nome:</label>
         <input type="text" id="name" />
@@ -97,7 +147,8 @@
     <div id="chatForm" style="display: none;">
         <div id="messages"></div>
         <input type="text" id="message" placeholder="Digite sua mensagem..." />
-        <button onclick="sendMessage()">Enviar</button>
+        <button onclick="sendMessage()" , onkeydown="sendMessage()">Enviar</button>
     </div>
 </body>
+
 </html>
